@@ -48,9 +48,23 @@ exports.isStudent = async (req, res, next) => {
     });
   }
 };
+exports.isInstructor = async (req, res, next) => {
+  try {
+    if (req.user.accountType != "isInstructor") {
+      return res.status(401).json({
+        message: "You are not a Instructor",
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      message: "something went wrong while validating isInstructor",
+    });
+  }
+};
 exports.isAdmin = async (req, res, next) => {
   try {
-    if (req.user.accountType != "Admin") {
+    if (req.user.accountType != "isAdmin") {
       return res.status(401).json({
         message: "You are not a Admin",
       });
@@ -58,7 +72,7 @@ exports.isAdmin = async (req, res, next) => {
     next();
   } catch (error) {
     return res.status(401).json({
-      message: "something went wrong while validating Admin",
+      message: "something went wrong while validating isAdmin",
     });
   }
 };

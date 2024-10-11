@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  token: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
@@ -36,6 +40,9 @@ const userSchema = new mongoose.Schema({
   image: {
     type: String,
     required: true,
+  },
+  resetPasswordExpires: {
+    type: Date,
   },
   courseProgress: [
     {
