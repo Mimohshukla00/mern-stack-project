@@ -54,11 +54,50 @@ exports.createCourse = async (req, res) => {
     });
 
     // add the new schema  to the instructor
-    
+
+    await User.findByIdAndUpdate(
+      { _id: instructorDetails },
+      {
+        $push: {
+          courses: newCourse._id,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
     // send response
     res.status(201).json({ message: "Course created successfully" });
-
   } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server while course creation" });
+  }
+};
 
+// get all courses
+export const getAllCourses = async (req, res) => {
+  try {
+    const allCourses = await Course.find(
+      {},
+      {
+        courseName: true,
+        price: true,
+        thumbnail: true,
+        instructor: true,
+        ratingAndReviews: true,
+        studentEnrolled: true,
+      }
+    )
+      .populate("instructor")
+      .exec();
+
+    return res.status(200).json({
+      message: "Courses fetched successfully",
+      courses: allCourses,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "cannot fetch courses" });
   }
 };
