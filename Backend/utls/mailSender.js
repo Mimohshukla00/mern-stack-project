@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const mailSender = async () => {
+const mailSender = async (email, title, body) => {
   try {
     // Ensure environment variables are set
     const { MAIL_HOST, MAIL_USER, MAIL_PASS } = process.env;
@@ -22,10 +22,10 @@ const mailSender = async () => {
     // Send email
     const info = await transporter.sendMail({
       from: `"Your App Name" <${MAIL_USER}>`, // Use environment variable
-      to: doc.email, // Receiver
-      subject: "New File Uploaded", // Subject line
-      text: `Hello ${doc.name}, your file has been successfully uploaded!`, // Dynamic plain text body
-      html: `<b>Hello ${doc.name},</b><br>Your file has been successfully uploaded!`, // Dynamic HTML body
+      to: `${email}`, // Receiver
+      subject: `${title}`, // Subject line
+      // text: `Hello ${doc.name}, your file has been successfully uploaded!`, // Dynamic plain text body
+      html: `${body}`, // Dynamic HTML body
     });
 
     console.log("Message sent: %s", info.messageId);
