@@ -41,16 +41,61 @@ exports.deleteAccount = async (req, res) => {
     // get user id
     const userId = req.user.id;
 
-    // find user by id
-    const user = await User.findByIdAndDelete(userId);
+    const userDetails = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!userDetails) {
+      return res.status(400).json({ message: "User not found" });
     }
+
+    await Profile.findByIdAndDelete({
+      _id: userDetails.additionalDetails,
+    });
+
+    await User.findByIdAndDelete({
+      _id: userId,
+    });
 
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error deleting account" });
+  }
+};
+
+// get all userdetails
+
+exports.getAllUserDetails = async (req, res) => {
+  try {
+    // get user id
+    const userId = req.user.id;
+
+    const userDetails = await User.findById(userId);
+
+    if (!userDetails) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const profileDetails = await Profile.findById(
+      userDetails.additionalDetails
+    );
+
+    res.status(200).json({
+      message: "User details fetched successfully",
+      userDetails: {
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        email: userDetails.email,
+        accountType: userDetails.accountType,
+        additionalDetails: {
+          gender: profileDetails.gender,
+          dateOfBirth: profileDetails.dateOfBirth,
+          about: profileDetails.about,
+          contactNumber: profileDetails.contactNumber,
+        },
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error fetching user details" });
   }
 };
